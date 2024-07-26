@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+        
+      </script>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <h1>ChatBot</h1>
+        </div>
+        <div id="chat-box">
+            <div id="chat-log"></div>
+        </div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    <script type="module" >
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+        const API_KEY = "AIzaSyBVNUYBxSGnVS8pfoKP2VCv1MvotdqIasQ";
+  const genAI = new GoogleGenerativeAI(API_KEY);
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+    const chatLog = document.getElementById('chat-log');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    sendBtn.addEventListener('click', async() => {
+    const userMessage = userInput.value.trim();
+    if (userMessage === '') return;
+
+        
+        const userMessageElement = document.createElement('div');
+        userMessageElement.classList.add('chat-message', 'user-message');
+        userMessageElement.textContent = userMessage;
+        chatLog.appendChild(userMessageElement);
+        userInput.value = '';
+        // Fetch your API_KEY
+       
+        const prompt = userMessage;
+        const result = await model.generateContent(prompt);
+        console.log(result);
+        let data=result.response.candidates[0].content.parts[0]
+        console.log(data);
+        
+        const botMessageElement = document.createElement('div');
+        botMessageElement.classList.add('chat-message', 'bot-message');
+        botMessageElement.textContent = data.text || 'Sorry, I didn\'t understand that.';
+        chatLog.appendChild(botMessageElement);
+
+    });
+    </script>
+   
+</body>
+</html>
